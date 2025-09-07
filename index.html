@@ -1,0 +1,2347 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Jogos da Super Sete - Personalizado</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #a9cf46; /* Verde (Super Sete) */
+            --primary-dark: #708e25;
+            --secondary-color: #c6e085; /* Verde claro (Super Sete) */
+            --accent-color: #b3d55d;
+            --background-color: #f6faeb;
+            --table-header: #a9cf46;
+            --table-border: #c6e085;
+            --table-even: #ecf5d6;
+            --table-odd: #ffffff;
+            --text-color: #303d10;
+            --footer-color: #405115;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            width: 350px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-dark);
+            margin: 10px 0;
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 40px;
+        }
+
+        .centralizado {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+        }
+
+        /* Seção dos Últimos Resultados */
+        .latest-results-section {
+            background: linear-gradient(135deg, #f6faeb, #ecf5d6);
+            border: 2px solid #a9cf46;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(169, 207, 70, 0.3);
+        }
+
+        .latest-results-title {
+            color: #a9cf46;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .result-card {
+            background: white;
+            border: 2px solid #c6e085;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .result-card.destaque {
+            border: 3px solid #a9cf46;
+            box-shadow: 0 4px 12px rgba(169, 207, 70, 0.4);
+        }
+
+        .result-header {
+            color: var(--primary-dark);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .result-date {
+            color: #405115;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .result-numbers {
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .coluna-resultado {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .coluna-label {
+            font-size: 0.7rem;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .digito-resultado {
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(169, 207, 70, 0.3);
+        }
+
+        .use-result-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .use-result-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(169, 207, 70, 0.3);
+        }
+
+        /* Grid de Seleção de Números */
+        .number-selection-section {
+            background: linear-gradient(135deg, #f6faeb, #ecf5d6);
+            border: 2px solid #a9cf46;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(169, 207, 70, 0.3);
+        }
+
+        .selection-title {
+            color: #a9cf46;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .selection-info {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+        }
+
+        .columns-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            max-width: 900px;
+            margin: 0 auto 20px;
+        }
+
+        .column-container {
+            background: white;
+            border: 2px solid #c6e085;
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+        }
+
+        .column-container.complete {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, #f6faeb, #ecf5d6);
+        }
+
+        .column-title {
+            font-weight: bold;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .column-digits {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+
+        .digit-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #c6e085;
+            background: white;
+            color: var(--text-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 0 auto;
+        }
+
+        .digit-btn:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .digit-btn.selected {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .digit-btn.last-result {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: 3px solid #a93226;
+            animation: pulse 2s infinite;
+        }
+
+        .digit-btn.last-result.selected {
+            background: linear-gradient(135deg, #8e44ad, #7d3c98);
+            border: 3px solid #6c3483;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+
+        .selection-controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .selection-controls .button {
+            margin: 0 10px;
+        }
+
+        /* Configurações de Geração */
+        .generation-section {
+            background: linear-gradient(135deg, #f6faeb, #ecf5d6);
+            border: 2px solid #a9cf46;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(169, 207, 70, 0.3);
+        }
+
+        .generation-title {
+            color: #a9cf46;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .config-item {
+            background: white;
+            border: 2px solid #c6e085;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .config-item label {
+            display: block;
+            color: #405115;
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .config-item input,
+        .config-item select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #c6e085;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-align: center;
+            background: #f6faeb;
+            color: #405115;
+        }
+
+        .config-item input:focus,
+        .config-item select:focus {
+            outline: none;
+            border-color: #a9cf46;
+            box-shadow: 0 0 0 3px rgba(169, 207, 70, 0.2);
+        }
+
+        /* Jogos Gerados */
+        .games-section {
+            background: linear-gradient(135deg, #f6faeb, #ecf5d6);
+            border: 2px solid #a9cf46;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(169, 207, 70, 0.3);
+            display: none;
+        }
+
+        .games-title {
+            color: #a9cf46;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .game-card {
+            background: white;
+            border: 2px solid #c6e085;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 0;
+        }
+
+        .game-original {
+            background: linear-gradient(135deg, #e3efc2, #d9eaae);
+            border: 2px solid #a9cf46;
+        }
+
+        .game-adjusted {
+            background: linear-gradient(135deg, #f6faeb, #ecf5d6);
+            border: 2px solid #c6e085;
+        }
+
+        .game-type-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .digits-info {
+            background: var(--secondary-color);
+            color: var(--text-color);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        .result-premio-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: linear-gradient(135deg, #ecf5d6, #f6faeb);
+            border-radius: 8px;
+            border: 1px solid #c6e085;
+        }
+
+        .premio-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 0.8rem;
+        }
+
+        .premio-valor {
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+
+        .result-estimado {
+            text-align: center;
+            margin-top: 10px;
+            padding: 8px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .game-header {
+            color: var(--primary-dark);
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .game-numbers {
+            text-align: center;
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .coluna-jogo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .coluna-jogo-label {
+            font-size: 0.7rem;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .digito-jogo {
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(169, 207, 70, 0.3);
+        }
+
+        .button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px;
+            display: inline-block;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 3px 6px rgba(169, 207, 70, 0.3);
+        }
+
+        .button:hover {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(198, 224, 133, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .download-buttons {
+            margin: 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 5px;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 250px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 10px;
+            position: absolute;
+            z-index: 99999;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-bottom: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            border: 2px solid #a9cf46;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 20px;
+            background-color: var(--table-even);
+            border-radius: 8px;
+            border: 2px solid var(--primary-color);
+            display: none;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(169, 207, 70, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+		
+		img {
+			  display: block;
+			  margin: auto;
+			  width:200px;
+			  height:100px;
+			  opacity: 0.5;
+			}
+		img:hover {
+				opacity: 1.0;
+		}
+		
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .logo {
+                width: 280px;
+            }
+
+            .columns-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                max-width: 100%;
+            }
+
+            .column-container {
+                padding: 10px 8px;
+            }
+
+            .digit-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .digito-resultado,
+            .digito-jogo {
+                width: 28px;
+                height: 28px;
+                line-height: 28px;
+                font-size: 0.9rem;
+            }
+
+            .game-numbers {
+                gap: 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .logo {
+                width: 220px;
+            }
+
+            .columns-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .digit-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
+            }
+
+            .column-digits {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img src="https://i.postimg.cc/wBthkvvc/supersete.png" alt="Super Sete Logo" class="logo">
+        <h1>Gerador de Jogos da Super Sete</h1>
+    </div>
+    
+    <div class="centralizado">
+        <p>Crie seus jogos personalizados da <strong>Super Sete</strong> com estratégias inteligentes</p>
+        <p><small>Escolha 7 dígitos (1 por coluna) • Configure os ajustes • Gere quantos jogos quiser • Sorteios múltiplos</small></p>
+    </div>
+
+    <!-- Loading dos Últimos Resultados -->
+    <div id="loadingResults" class="loading">
+        <div class="loading-spinner"></div> Carregando últimos resultados...
+    </div>
+
+    <!-- Seção dos Últimos Resultados -->
+    <div class="latest-results-section" id="latestResultsSection" style="display: none;">
+        <div class="latest-results-title">
+            <i class="fas fa-trophy"></i> Últimos 6 Concursos da Super Sete
+        </div>
+        <div class="results-grid" id="resultsGrid">
+            <!-- Resultados serão inseridos aqui -->
+        </div>
+    </div>
+
+    <!-- Seção de Seleção de Números -->
+    <div class="number-selection-section">
+        <div class="selection-title">
+            <i class="fas fa-mouse-pointer"></i> Escolha 1 Dígito por Coluna (0-9)
+        </div>
+        <div class="selection-info">
+            <p><strong>Selecione 1 dígito em cada uma das 7 colunas</strong></p>
+            <p id="selectedCount">Selecionados: <span>0</span>/7 colunas</p>
+        </div>
+        
+        <div class="columns-grid" id="columnsGrid">
+            <!-- Colunas serão geradas via JavaScript -->
+        </div>
+
+		<div align="center">
+			<span><small>A Super Sete tem sorteios às segundas, quartas e sextas!</small></span>
+		</div>
+        <div class="selection-controls">
+            <button class="button" onclick="clearSelection()">
+                <i class="fas fa-eraser"></i> Limpar Seleção
+            </button>
+            <button class="button" onclick="randomSelection()">
+                <i class="fas fa-dice"></i> Seleção Aleatória
+            </button>
+        </div>
+    </div>
+
+    <!-- Configurações de Geração -->
+    <div class="generation-section">
+        <div class="generation-title">
+            <i class="fas fa-cogs"></i> Configurações dos Jogos
+        </div>
+        <div class="config-grid">
+            <div class="config-item">
+                <label>Jogos:</label>
+                <input type="number" id="qtdJogos" min="1" value="8" onchange="updateTotalValue()">
+                <span class="tooltip"><i class="fas fa-info-circle"></i>
+                    <span class="tooltiptext">Número de jogos diferentes que serão gerados</span>
+                </span>
+            </div>
+            
+            <div class="config-item">
+                <label>Ajustes:</label>
+                <select id="ajusteDigitos">
+                    <option value="0">Sem Ajuste (0)</option>
+                    <option value="1" selected>+ 1</option>
+                    <option value="2">+ 2</option>
+                    <option value="3">+ 3</option>
+                    <option value="4">+ 4</option>
+                    <option value="5">+ 5</option>
+                    <option value="-1">- 1</option>
+                    <option value="-2">- 2</option>
+                    <option value="-3">- 3</option>
+                    <option value="-4">- 4</option>
+                    <option value="-5">- 5</option>
+                </select>
+                <span class="tooltip"><i class="fas fa-info-circle"></i>
+                    <span class="tooltiptext">Valor que será somado/subtraído de cada dígito (módulo 10)</span>
+                </span>
+            </div>
+
+			<div class="config-item">
+				<label>Custo:</label>
+				<select id="valorJogo" onchange="updateTotalValue()">
+					<option value="2.50" selected>7 dígitos → R$ 2,50</option>
+				</select>
+				<span class="tooltip"><i class="fas fa-info-circle"></i>
+					<span class="tooltiptext">Valor fixo de cada jogo da Super Sete</span>
+				</span>
+			</div>
+
+            <div class="config-item">
+                <label>Estratégia:</label>
+                <select id="estrategia">
+                    <option value="equilibrado" selected>Equilibrado</option>
+                    <option value="frequencia">Frequência</option>
+                    <option value="paridade">Pares/Ímpares</option>
+                    <option value="colunas">Por Colunas</option>
+                    <option value="sequencia">Anti-Sequência</option>
+                    <option value="soma">Soma Otimizada</option>
+                </select>
+                <span class="tooltip"><i class="fas fa-info-circle"></i>
+                    <span class="tooltiptext">Estratégia baseada em análises estatísticas dos resultados</span>
+                </span>
+            </div>
+
+            <div class="config-item">
+                <label>Não a Repetição:</label>
+                <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                    <input type="checkbox" id="evitarUltimoConcurso" style="width: auto; margin-right: 10px; transform: scale(1.5);">
+                    <label for="evitarUltimoConcurso" style="margin: 0; font-size: 0.9rem; text-transform: none;"><span><small>Ñ dígitos último concurso</small></span></label>
+                </div>
+                <span class="tooltip"><i class="fas fa-info-circle"></i>
+                    <span class="tooltiptext">Quando marcado, evita usar os dígitos que saíram no último concurso</span>
+                </span>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <div id="totalValueDisplay" style="background: white; border: 2px solid #c6e085; border-radius: 8px; padding: 15px; margin-bottom: 15px; color: #405115; font-weight: bold;">
+                <i class="fas fa-calculator"></i> Total: R$ 22,50 (9 jogos × R$ 2,50)
+            </div>
+            <div id="digitsInfo" style="background: linear-gradient(135deg, #c6e085, #a9cf46); color: #303d10; border-radius: 8px; padding: 10px; margin-bottom: 15px; font-weight: bold; text-align: center; display: none;">
+                <i class="fas fa-chart-bar"></i> <span id="digitsText">Aguardando seleção...</span>
+            </div>
+            <button class="button" onclick="generateGames()" id="generateBtn">
+                <i class="fas fa-magic"></i> Gerar Jogos
+            </button>
+            <button class="button" onclick="showInfoModal()" style="background: #3498db; margin-left: 10px;">
+                <i class="fas fa-info-circle"></i> Como Funciona
+            </button>
+        </div>
+    </div>
+
+    <!-- Seção dos Jogos Gerados -->
+    <div class="games-section" id="gamesSection">
+        <div class="games-title">
+            <i class="fas fa-list-ol"></i> Seus Jogos Gerados
+        </div>
+        <div id="gamesContainer">
+            <!-- Jogos serão inseridos aqui -->
+        </div>
+        
+        <!-- Botões de Download -->
+        <div class="download-buttons">
+            <button class="button" onclick="downloadTXT()">
+                <i class="fas fa-file-alt"></i> Baixar TXT
+            </button>
+            <button class="button" onclick="downloadHTML()">
+                <i class="fas fa-file-code"></i> Baixar HTML
+            </button>
+            <button class="button" onclick="downloadXLSX()">
+                <i class="fas fa-file-excel"></i> Baixar XLSX
+            </button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div>Feito por: <i>Márcio Fernando Maia - Todos os direitos reservados - 2025</i></div>
+</footer>
+
+<script>
+let selectedDigits = new Array(7).fill(null); // Array para 7 colunas
+let generatedGames = [];
+let latestResults = [];
+let analysisData = {};
+
+// Configuração da API
+const API_CONFIG = {
+    CAIXA_URL: 'https://servicebus2.caixa.gov.br/portaldeloterias/api/supersete',
+    CORS_PROXY_URLS: [
+        'https://api.allorigins.win/get?url=',
+        'https://corsproxy.io/?'
+    ]
+};
+
+// =================== INICIALIZAÇÃO ===================
+
+window.addEventListener('load', () => {
+    console.log('Gerador de Jogos da Super Sete carregado!');
+    
+    // Gerar grid de colunas
+    generateColumnsGrid();
+    
+    // Carregar últimos resultados
+    loadLatestResults();
+});
+
+// =================== GRID DE COLUNAS ===================
+
+function generateColumnsGrid() {
+    const grid = document.getElementById('columnsGrid');
+    
+    for (let col = 0; col < 7; col++) {
+        const columnContainer = document.createElement('div');
+        columnContainer.className = 'column-container';
+        columnContainer.id = `column-${col}`;
+        
+        const title = document.createElement('div');
+        title.className = 'column-title';
+        title.textContent = `Coluna ${col + 1}`;
+        columnContainer.appendChild(title);
+        
+        const digitsContainer = document.createElement('div');
+        digitsContainer.className = 'column-digits';
+        
+        for (let digit = 0; digit <= 9; digit++) {
+            const btn = document.createElement('button');
+            btn.className = 'digit-btn';
+            btn.textContent = digit.toString();
+            btn.onclick = () => selectDigit(col, digit, btn);
+            digitsContainer.appendChild(btn);
+        }
+        
+        columnContainer.appendChild(digitsContainer);
+        grid.appendChild(columnContainer);
+    }
+}
+
+function selectDigit(column, digit, btn) {
+    // Limpar seleção anterior da coluna
+    const columnContainer = document.getElementById(`column-${column}`);
+    const allBtns = columnContainer.querySelectorAll('.digit-btn');
+    allBtns.forEach(b => b.classList.remove('selected'));
+    
+    // Selecionar novo dígito
+    selectedDigits[column] = digit;
+    btn.classList.add('selected');
+    
+    // Atualizar visual da coluna
+    if (selectedDigits[column] !== null) {
+        columnContainer.classList.add('complete');
+    } else {
+        columnContainer.classList.remove('complete');
+    }
+    
+    updateSelectedCount();
+    updateGenerateButton();
+    updateDigitsInfo();
+    updateTotalValue();
+}
+
+function updateSelectedCount() {
+    const selectedCount = selectedDigits.filter(d => d !== null).length;
+    const countSpan = document.querySelector('#selectedCount span');
+    countSpan.textContent = selectedCount;
+}
+
+function updateGenerateButton() {
+    const btn = document.getElementById('generateBtn');
+    const selectedCount = selectedDigits.filter(d => d !== null).length;
+    btn.disabled = selectedCount !== 7;
+}
+
+function updateDigitsInfo() {
+    const digitsDiv = document.getElementById('digitsInfo');
+    const digitsText = document.getElementById('digitsText');
+    
+    const selectedCount = selectedDigits.filter(d => d !== null).length;
+    
+    if (selectedCount > 0) {
+        // Análise dos dígitos
+        const validDigits = selectedDigits.filter(d => d !== null);
+        const pares = validDigits.filter(d => d % 2 === 0).length;
+        const impares = validDigits.length - pares;
+        const soma = validDigits.reduce((acc, d) => acc + d, 0);
+        
+        // Análise por faixas
+        const baixos = validDigits.filter(d => d < 5).length; // 0-4
+        const altos = validDigits.filter(d => d >= 5).length; // 5-9
+        
+        digitsText.textContent = `${pares}P/${impares}I • ${baixos}B/${altos}A • Soma: ${soma}`;
+        digitsDiv.style.display = 'block';
+    } else {
+        digitsDiv.style.display = 'none';
+    }
+}
+
+function updateTotalValue() {
+    const qtdJogos = parseInt(document.getElementById('qtdJogos').value) || 8;
+    const ajuste = parseInt(document.getElementById('ajusteDigitos').value);
+    const valorJogo = parseFloat(document.getElementById('valorJogo').value);
+    
+    // Se sem ajuste, só o jogo original. Com ajuste, original + ajustados
+    const totalJogos = ajuste === 0 ? 1 : qtdJogos + 1; // 1 original + N ajustados
+    const total = (totalJogos * valorJogo).toFixed(2);
+    
+    const totalDisplay = document.getElementById('totalValueDisplay');
+    totalDisplay.innerHTML = `<i class="fas fa-calculator"></i> Total: R$ ${total.replace('.', ',')} (${totalJogos} jogos × R$ ${valorJogo.toFixed(2).replace('.', ',')})`;
+}
+
+function clearSelection() {
+    selectedDigits = new Array(7).fill(null);
+    
+    // Limpar visual
+    document.querySelectorAll('.digit-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    document.querySelectorAll('.column-container').forEach(col => {
+        col.classList.remove('complete');
+    });
+    
+    updateSelectedCount();
+    updateGenerateButton();
+    updateDigitsInfo();
+    showNotification('🧹 Seleção limpa!', 'info');
+}
+
+function randomSelection() {
+    clearSelection();
+    
+    // Selecionar um dígito aleatório por coluna
+    for (let col = 0; col < 7; col++) {
+        const digit = Math.floor(Math.random() * 10);
+        const columnContainer = document.getElementById(`column-${col}`);
+        const btn = columnContainer.querySelectorAll('.digit-btn')[digit];
+        selectDigit(col, digit, btn);
+    }
+    
+    showNotification('🎲 Dígitos selecionados aleatoriamente!', 'success');
+}
+
+// =================== ÚLTIMOS RESULTADOS ===================
+
+async function loadLatestResults() {
+    const loadingDiv = document.getElementById('loadingResults');
+    const resultsSection = document.getElementById('latestResultsSection');
+    
+    loadingDiv.style.display = 'block';
+    
+    try {
+        console.log('Carregando últimos resultados...');
+        
+        // Tentar buscar últimos 6 resultados
+        const results = await fetchLatestResults();
+        latestResults = results;
+        
+        displayLatestResults(results);
+        analyzeResults(results);
+        
+        loadingDiv.style.display = 'none';
+        resultsSection.style.display = 'block';
+        
+    } catch (error) {
+        console.error('Erro ao carregar resultados:', error);
+        loadingDiv.style.display = 'none';
+        
+        // Mostrar resultados fictícios em caso de erro
+        const mockResults = generateMockResults();
+        latestResults = mockResults;
+        displayLatestResults(mockResults);
+        analyzeResults(mockResults);
+        resultsSection.style.display = 'block';
+        
+        showNotification('⚠️ Usando dados simulados (API indisponível)', 'info');
+    }
+}
+
+async function fetchLatestResults() {
+    // Tentar descobrir último concurso
+    let ultimoConcurso = 728; // fallback
+    
+    for (const proxyUrl of API_CONFIG.CORS_PROXY_URLS) {
+        try {
+            let url = `${proxyUrl}${encodeURIComponent(API_CONFIG.CAIXA_URL)}`;
+            const response = await fetch(url);
+            
+            if (response.ok) {
+                const proxyData = await response.json();
+                const data = JSON.parse(proxyData.contents);
+                if (data.numero) {
+                    ultimoConcurso = parseInt(data.numero);
+                    break;
+                }
+            }
+        } catch (error) {
+            console.warn(`Proxy ${proxyUrl} falhou:`, error);
+        }
+    }
+    
+    // Buscar os últimos 6 concursos
+    const results = [];
+    for (let i = 0; i < 6; i++) {
+        const concursoNum = ultimoConcurso - i;
+        const result = await fetchSingleResult(concursoNum);
+        if (result) results.push(result);
+    }
+    
+    return results;
+}
+
+async function fetchSingleResult(concursoNum) {
+    for (const proxyUrl of API_CONFIG.CORS_PROXY_URLS) {
+        try {
+            const caixaUrl = `${API_CONFIG.CAIXA_URL}/${concursoNum}`;
+            let url = `${proxyUrl}${encodeURIComponent(caixaUrl)}`;
+            
+            const response = await fetch(url);
+            if (response.ok) {
+                const proxyData = await response.json();
+                const data = JSON.parse(proxyData.contents);
+                
+                if (data.numero && data.listaDezenas) {
+                    return {
+                        concurso: data.numero,
+                        data: formatDate(data.dataApuracao || new Date().toISOString()),
+                        digitos: data.listaDezenas, // Array com 7 dígitos
+                        acumulado: data.acumulado || false,
+                        proximoConcurso: data.numeroConcursoProximo,
+                        dataProximoConcurso: data.dataProximoConcurso,
+                        valorEstimadoProximo: data.valorEstimadoProximoConcurso,
+                        premiacoes: data.listaRateioPremio || [],
+                        local: data.localSorteio || 'Espaço da Sorte',
+                        cidade: data.nomeMunicipioUFSorteio || 'SAO PAULO, SP'
+                    };
+                }
+            }
+        } catch (error) {
+            console.warn(`Erro ao buscar concurso ${concursoNum}:`, error);
+        }
+    }
+    
+    return null;
+}
+
+function generateMockResults() {
+    const results = [];
+    
+    for (let i = 0; i < 6; i++) {
+        const concurso = 728 - i;
+        const date = new Date();
+        date.setDate(date.getDate() - (i * 2)); // Super Sete é 3x por semana
+        
+        const digitos = [];
+        for (let col = 0; col < 7; col++) {
+            digitos.push(Math.floor(Math.random() * 10).toString());
+        }
+        
+        results.push({
+            concurso: concurso,
+            data: formatDate(date.toISOString()),
+            digitos: digitos
+        });
+    }
+    
+    return results;
+}
+
+function displayLatestResults(results) {
+    const grid = document.getElementById('resultsGrid');
+    grid.innerHTML = '';
+    
+    results.forEach((result, index) => {
+        const card = document.createElement('div');
+        card.className = `result-card ${index === 0 ? 'destaque' : ''}`;
+        
+        // Determinar status do concurso
+        const statusConcurso = result.acumulado ? 'ACUMULOU!' : (result.premiacoes && result.premiacoes[0] && result.premiacoes[0].numeroDeGanhadores > 0 ? `${result.premiacoes[0].numeroDeGanhadores} GANHADORES (7 acertos)` : 'TEVE GANHADORES!');
+        
+        // Análise dos dígitos
+        const digitosNum = result.digitos.map(d => parseInt(d));
+        const pares = digitosNum.filter(d => d % 2 === 0).length;
+        const impares = 7 - pares;
+        const baixos = digitosNum.filter(d => d < 5).length;
+        const altos = digitosNum.filter(d => d >= 5).length;
+        const soma = digitosNum.reduce((acc, d) => acc + d, 0);
+        
+        // Informações de premiação
+        let premiacaoInfo = '';
+        if (result.premiacoes && result.premiacoes.length > 0) {
+            premiacaoInfo = result.premiacoes.filter(p => p.numeroDeGanhadores > 0).slice(0, 5).map(p => 
+                `<div class="premio-item">
+                    <span>${p.descricaoFaixa}:</span>
+                    <span class="premio-valor">${p.numeroDeGanhadores} - R$ ${p.valorPremio.toFixed(2).replace('.', ',')}</span>
+                </div>`
+            ).join('');
+        }
+        
+			// Próximo concurso e valor estimado
+			const proximoConcurso = result.proximoConcurso ? `Concurso ${result.proximoConcurso}` : 'A definir';
+			const dataProximo = result.dataProximoConcurso ? formatDate(result.dataProximoConcurso) : 'A definir';
+
+			let valorEstimado = 'A definir';
+			if (result.valorEstimadoProximo) {
+				if (result.valorEstimadoProximo >= 1000000) {
+					valorEstimado = `R$ ${(result.valorEstimadoProximo / 1000000).toFixed(1)} milhões`;
+				} else {
+					valorEstimado = `R$ ${(result.valorEstimadoProximo / 1000).toFixed(0)} mil`;
+				}
+			}
+        
+        card.innerHTML = `
+            <div class="result-header">
+                ${index === 0 ? '🏆 ' : ''}Concurso ${result.concurso}
+            </div>
+            <div class="result-date">
+                <i class="fas fa-calendar"></i> ${result.data} ${result.cidade ? `(${result.cidade.split(',')[1] || result.cidade})` : ''}
+            </div>
+            <div class="result-numbers">
+                ${result.digitos.map((digit, colIndex) => 
+                    `<div class="coluna-resultado">
+                        <div class="coluna-label">C${colIndex + 1}</div>
+                        <div class="digito-resultado">${digit}</div>
+                    </div>`
+                ).join('')}
+            </div>
+            
+            <div style="text-align: center; margin: 10px 0; font-size: 0.85rem; color: #405115;">
+                <strong>Análise:</strong> ${pares}P/${impares}I • ${baixos}B/${altos}A • Soma: ${soma}
+            </div>
+            
+            <div style="color: ${result.acumulado ? '#e74c3c' : '#27ae60'}; font-weight: bold; margin: 10px 0; font-size: 0.9rem;">
+                ${statusConcurso}
+            </div>
+            
+            ${premiacaoInfo ? `<div class="result-premio-info">${premiacaoInfo}</div>` : ''}
+            
+            <div class="result-estimado">
+                Próximo Sorteio: ${proximoConcurso}<br>
+                ${dataProximo}<br>
+                Prêmio Estimado: <strong>${valorEstimado}</strong>
+            </div>
+            
+            <div>
+                <button class="use-result-btn" onclick="useResult(${index})">
+                    <i class="fas fa-magic"></i> Usar estes dígitos
+                </button>
+            </div>
+        `;
+        
+        grid.appendChild(card);
+    });
+    
+    // Destacar dígitos do último concurso na grade de seleção
+    if (results.length > 0) {
+        highlightLastConcursoDigits(results[0].digitos);
+    }
+}
+
+function highlightLastConcursoDigits(lastConcursoDigitos) {
+    // Limpar destaques anteriores
+    document.querySelectorAll('.digit-btn').forEach(btn => {
+        btn.classList.remove('last-result');
+    });
+    
+    // Destacar dígitos do último concurso
+    lastConcursoDigitos.forEach((digit, colIndex) => {
+        const digitNum = parseInt(digit);
+        const columnContainer = document.getElementById(`column-${colIndex}`);
+        const btn = columnContainer.querySelectorAll('.digit-btn')[digitNum];
+        if (btn) {
+            btn.classList.add('last-result');
+        }
+    });
+    
+    // Adicionar informação visual
+    const selectionInfo = document.querySelector('.selection-info');
+    if (selectionInfo && lastConcursoDigitos.length > 0) {
+        const lastResultInfo = document.getElementById('lastResultInfo');
+        if (lastResultInfo) lastResultInfo.remove();
+        
+        const info = document.createElement('p');
+        info.id = 'lastResultInfo';
+        info.innerHTML = `<strong style="color: #e74c3c;">🔴 Dígitos em destaque saíram no último concurso</strong>`;
+        info.style.marginTop = '10px';
+        selectionInfo.appendChild(info);
+    }
+}
+
+function useResult(index) {
+    const result = latestResults[index];
+    if (!result) return;
+    
+    // Limpar seleção atual
+    clearSelection();
+    
+    // Selecionar dígitos do resultado
+    result.digitos.forEach((digit, colIndex) => {
+        const digitNum = parseInt(digit);
+        const columnContainer = document.getElementById(`column-${colIndex}`);
+        const btn = columnContainer.querySelectorAll('.digit-btn')[digitNum];
+        if (btn) {
+            selectDigit(colIndex, digitNum, btn);
+        }
+    });
+    
+    showNotification(`✅ Dígitos do concurso ${result.concurso} selecionados!`, 'success');
+}
+
+function analyzeResults(results) {
+    // Análise dos últimos resultados para estratégias
+    const allDigits = results.flatMap(r => r.digitos.map(d => parseInt(d)));
+    
+    // Frequência dos dígitos
+    const frequency = {};
+    for (let i = 0; i <= 9; i++) frequency[i] = 0;
+    allDigits.forEach(digit => frequency[digit]++);
+    
+    // Frequência por coluna
+    const columnFrequency = {};
+    for (let col = 0; col < 7; col++) {
+        columnFrequency[col] = {};
+        for (let digit = 0; digit <= 9; digit++) {
+            columnFrequency[col][digit] = 0;
+        }
+    }
+    
+    results.forEach(result => {
+        result.digitos.forEach((digit, colIndex) => {
+            const digitNum = parseInt(digit);
+            columnFrequency[colIndex][digitNum]++;
+        });
+    });
+    
+    // Padrões de paridade
+    const paresCount = allDigits.filter(d => d % 2 === 0).length;
+    const imparesCount = allDigits.length - paresCount;
+    
+    analysisData = {
+        frequency,
+        columnFrequency,
+        paresCount,
+        imparesCount,
+        allDigits,
+        avgSoma: results.reduce((acc, r) => {
+            const soma = r.digitos.reduce((s, d) => s + parseInt(d), 0);
+            return acc + soma;
+        }, 0) / results.length
+    };
+}
+
+// =================== GERAÇÃO DE JOGOS ===================
+
+async function generateGames() {
+    const selectedCount = selectedDigits.filter(d => d !== null).length;
+    if (selectedCount !== 7) {
+        showNotification('❌ Selecione 1 dígito em cada uma das 7 colunas!', 'error');
+        return;
+    }
+    
+    const qtdJogos = parseInt(document.getElementById('qtdJogos').value);
+    const ajusteBase = parseInt(document.getElementById('ajusteDigitos').value);
+    const estrategia = document.getElementById('estrategia').value;
+    const evitarUltimoConcurso = document.getElementById('evitarUltimoConcurso').checked;
+    
+    if (qtdJogos < 1) {
+        showNotification('❌ Quantidade de jogos deve ser no mínimo 1!', 'error');
+        return;
+    }
+    
+    // Aviso para grandes quantidades
+    if (qtdJogos > 1000) {
+        const confirmed = await showConfirmDialog(
+            `⚠️ Você está prestes a gerar ${qtdJogos.toLocaleString()} jogos!\n\n` +
+            `Isso pode:\n` +
+            `• Demorar alguns segundos para processar\n` +
+            `• Consumir mais memória do navegador\n` +
+            `• Gerar arquivos grandes para download\n\n` +
+            `Deseja continuar?`
+        );
+        
+        if (!confirmed) {
+            return;
+        }
+    }
+    
+    // Obter dígitos do último concurso para evitar
+    let digitosEvitar = [];
+    if (evitarUltimoConcurso && latestResults.length > 0) {
+        digitosEvitar = latestResults[0].digitos.map(d => parseInt(d));
+    }
+    
+    generatedGames = [];
+    let jogoCounter = 1;
+    
+    // Verificar se dígitos selecionados coincidem com último concurso
+    if (evitarUltimoConcurso && digitosEvitar.length > 0) {
+        const conflict = selectedDigits.some((digit, col) => digit === digitosEvitar[col]);
+        if (conflict) {
+            showNotification('⚠️ Alguns dígitos selecionados saíram no último concurso!', 'info');
+        }
+    }
+    
+    // Adicionar jogo original apenas UMA VEZ
+    const originalDigits = [...selectedDigits];
+    generatedGames.push({
+        jogo: jogoCounter++,
+        tipo: 'original',
+        estrategia: 'original',
+        digitos: originalDigits.map(d => d.toString())
+    });
+    
+    // Gerar jogos ajustados com estratégias
+    if (ajusteBase !== 0) {
+        for (let i = 1; i <= qtdJogos; i++) {
+            const gameDigits = generateGameWithStrategy(estrategia, ajusteBase, i, digitosEvitar);
+            
+            generatedGames.push({
+                jogo: jogoCounter++,
+                tipo: 'ajustado',
+                estrategia: estrategia,
+                ajuste: ajusteBase * i,
+                digitos: gameDigits.map(d => d.toString())
+            });
+        }
+    }
+    
+    displayGeneratedGamesOptimized();
+    
+    let successMessage = `✅ ${generatedGames.length} jogos gerados com sucesso!`;
+    if (evitarUltimoConcurso && digitosEvitar.length > 0) {
+        successMessage += ' (Evitando repetições do último concurso)';
+    }
+    
+    showNotification(successMessage, 'success');
+}
+
+function generateGameWithStrategy(estrategia, ajusteBase, numeroJogo, digitosEvitar) {
+    let gameDigits = [...selectedDigits];
+    
+    switch (estrategia) {
+        case 'equilibrado':
+            gameDigits = applyEquilibradoStrategy(gameDigits, ajusteBase, numeroJogo);
+            break;
+            
+        case 'frequencia':
+            gameDigits = applyFrequenciaStrategy(gameDigits, ajusteBase, numeroJogo);
+            break;
+            
+        case 'paridade':
+            gameDigits = applyParidadeStrategy(gameDigits, ajusteBase, numeroJogo);
+            break;
+            
+        case 'colunas':
+            gameDigits = applyColunasStrategy(gameDigits, ajusteBase, numeroJogo);
+            break;
+            
+        case 'sequencia':
+            gameDigits = applySequenciaStrategy(gameDigits, ajusteBase, numeroJogo);
+            break;
+            
+        case 'soma':
+            gameDigits = applySomaStrategy(gameDigits, ajusteBase, numeroJogo);
+            break;
+            
+        default:
+            // Ajuste progressivo simples
+            const ajusteAtual = ajusteBase * numeroJogo;
+            gameDigits = gameDigits.map(digit => (digit + ajusteAtual) % 10);
+    }
+    
+    // Evitar dígitos do último concurso se necessário
+    if (digitosEvitar.length > 0) {
+        gameDigits = gameDigits.map((digit, col) => {
+            if (digit === digitosEvitar[col]) {
+                // Tentar alternativas
+                for (let alt of [(digit + 1) % 10, (digit + 9) % 10, (digit + 2) % 10, (digit + 8) % 10]) {
+                    if (alt !== digitosEvitar[col]) {
+                        return alt;
+                    }
+                }
+            }
+            return digit;
+        });
+    }
+    
+    return gameDigits;
+}
+
+function applyEquilibradoStrategy(digits, ajuste, numeroJogo) {
+    const ajusteAtual = ajuste * numeroJogo;
+    return digits.map((digit, col) => {
+        const variation = (numeroJogo + col) % 3 - 1; // -1, 0, +1
+        return (digit + ajusteAtual + variation + 10) % 10;
+    });
+}
+
+function applyFrequenciaStrategy(digits, ajuste, numeroJogo) {
+    if (!analysisData.columnFrequency) return digits;
+    
+    return digits.map((digit, col) => {
+        const colFreq = analysisData.columnFrequency[col];
+        const sortedByFreq = Object.entries(colFreq)
+            .sort(([,a], [,b]) => b - a)
+            .map(([d]) => parseInt(d));
+        
+        const useFrequent = (numeroJogo + col) % 2 === 0;
+        return useFrequent ? 
+            sortedByFreq[0] : // Mais frequente
+            sortedByFreq[sortedByFreq.length - 1]; // Menos frequente
+    });
+}
+
+function applyParidadeStrategy(digits, ajuste, numeroJogo) {
+    const targetPares = Math.round(analysisData.paresCount / analysisData.imparesCount * 3.5);
+    
+    let newDigits = [];
+    let paresCount = 0;
+    
+    for (let col = 0; col < 7; col++) {
+        const needPar = paresCount < targetPares && (7 - col) > (7 - targetPares - paresCount);
+        
+        if (needPar) {
+            // Escolher par
+            const pares = [0, 2, 4, 6, 8];
+            newDigits.push(pares[(col + numeroJogo) % pares.length]);
+            paresCount++;
+        } else {
+            // Escolher ímpar
+            const impares = [1, 3, 5, 7, 9];
+            newDigits.push(impares[(col + numeroJogo) % impares.length]);
+        }
+    }
+    
+    return newDigits;
+}
+
+function applyColunasStrategy(digits, ajuste, numeroJogo) {
+    // Estratégia específica por coluna usando análise histórica
+    return digits.map((digit, col) => {
+        if (!analysisData.columnFrequency || !analysisData.columnFrequency[col]) {
+            return (digit + ajuste * numeroJogo) % 10;
+        }
+        
+        const colFreq = analysisData.columnFrequency[col];
+        const sortedByFreq = Object.entries(colFreq)
+            .sort(([,a], [,b]) => b - a)
+            .map(([d]) => parseInt(d));
+        
+        // Usar diferentes estratégias por coluna
+        const strategy = (col + numeroJogo) % 3;
+        switch (strategy) {
+            case 0: return sortedByFreq[0]; // Mais frequente
+            case 1: return sortedByFreq[Math.floor(sortedByFreq.length / 2)]; // Médio
+            case 2: return sortedByFreq[sortedByFreq.length - 1]; // Menos frequente
+            default: return digit;
+        }
+    });
+}
+
+function applySequenciaStrategy(digits, ajuste, numeroJogo) {
+    // Evitar dígitos consecutivos nas colunas adjacentes
+    let newDigits = [...digits];
+    
+    for (let col = 0; col < 7; col++) {
+        let adjusted = (digits[col] + ajuste * numeroJogo) % 10;
+        
+        // Evitar consecutivos com coluna anterior
+        if (col > 0) {
+            while (Math.abs(adjusted - newDigits[col - 1]) <= 1) {
+                adjusted = (adjusted + 2) % 10;
+            }
+        }
+        
+        newDigits[col] = adjusted;
+    }
+    
+    return newDigits;
+}
+
+function applySomaStrategy(digits, ajuste, numeroJogo) {
+    const targetSoma = analysisData.avgSoma || 31.5; // Soma média da Super Sete
+    const somaAtual = digits.reduce((acc, d) => acc + d, 0);
+    const diferenca = targetSoma - somaAtual;
+    
+    return digits.map((digit, col) => {
+        const ajusteIndividual = Math.round(diferenca / 7) + (ajuste * numeroJogo);
+        return (digit + ajusteIndividual + 10) % 10;
+    });
+}
+
+// =================== DOWNLOADS ===================
+
+function downloadTXT() {
+    if (generatedGames.length === 0) {
+        showNotification('❌ Nenhum jogo foi gerado ainda!', 'error');
+        return;
+    }
+    
+    let content = "";
+    
+    generatedGames.forEach(game => {
+        content += `${game.digitos.join(' ')}\n`;
+    });
+    
+    downloadFile(content, 'jogos_super_sete.txt', 'text/plain');
+    showNotification('📄 Arquivo TXT baixado! (apenas dígitos)', 'success');
+}
+
+function downloadHTML() {
+    if (generatedGames.length === 0) {
+        showNotification('❌ Nenhum jogo foi gerado ainda!', 'error');
+        return;
+    }
+    
+    let html = `
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Jogos da Super Sete</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f6faeb, #ecf5d6);
+            margin: 0;
+            padding: 20px;
+            color: #303d10;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #708e25;
+        }
+        .info {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #a9cf46;
+        }
+        .game {
+            background: white;
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #c6e085;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+        .game-title {
+            font-weight: bold;
+            color: #708e25;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        .numbers {
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .column-label {
+            font-size: 0.8rem;
+            color: #405115;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .digit {
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            background: #a9cf46;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .strategy {
+            background: #c6e085;
+            color: #303d10;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #405115;
+            font-style: italic;
+        }
+        @media print {
+            body { background: white; }
+            .game { page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🟡 MEUS JOGOS DA SUPER SETE 🟡</h1>
+    </div>
+    
+    <div class="info">
+        <p><strong>Data de Geração:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+        <p><strong>Total de Jogos:</strong> ${generatedGames.length}</p>
+        <p><strong>Estratégia Principal:</strong> ${generatedGames[1]?.estrategia.toUpperCase() || 'ORIGINAL'}</p>
+    </div>
+    
+    ${generatedGames.map(game => {
+        // Análise do jogo
+        const digitosNum = game.digitos.map(d => parseInt(d));
+        const pares = digitosNum.filter(d => d % 2 === 0).length;
+        const impares = 7 - pares;
+        const baixos = digitosNum.filter(d => d < 5).length;
+        const altos = digitosNum.filter(d => d >= 5).length;
+        const soma = digitosNum.reduce((acc, d) => acc + d, 0);
+        
+        return `
+        <div class="game">
+            <div class="game-title">🎫 Jogo ${game.jogo}</div>
+            <div class="numbers">
+                ${game.digitos.map((digit, index) => `
+                    <div class="column">
+                        <div class="column-label">C${index + 1}</div>
+                        <div class="digit">${digit}</div>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="strategy">${game.tipo.toUpperCase()} - ${game.estrategia?.toUpperCase() || 'ORIGINAL'}</div>
+            <div style="margin-top: 10px; font-size: 0.9rem; color: #405115;">
+                <strong>Análise:</strong> ${pares}P/${impares}I • ${baixos}B/${altos}A • Soma: ${soma}
+            </div>
+        </div>
+        `;
+    }).join('')}
+    
+    <div class="footer">
+        <p>Gerado por: <strong>Gerador de Jogos da Super Sete</strong></p>
+        <p>🟡 Boa sorte nos sorteios! 🟡</p>
+    </div>
+</body>
+</html>`;
+    
+    downloadFile(html, 'jogos_super_sete.html', 'text/html');
+    showNotification('🌐 Arquivo HTML baixado!', 'success');
+}
+
+function downloadXLSX() {
+    if (generatedGames.length === 0) {
+        showNotification('❌ Nenhum jogo foi gerado ainda!', 'error');
+        return;
+    }
+    
+    // Criar dados para a planilha
+    const data = [
+        ['JOGOS DA SUPER SETE - GERADOS AUTOMATICAMENTE'],
+        [`Data de Geração: ${new Date().toLocaleString('pt-BR')}`],
+        [`Total de Jogos: ${generatedGames.length}`],
+        [`Estratégia: ${generatedGames[1]?.estrategia.toUpperCase() || 'ORIGINAL'}`],
+        [''], // linha vazia
+        ['Jogo', 'Tipo', 'Estratégia', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7']
+    ];
+    
+    generatedGames.forEach(game => {
+        data.push([
+            `Jogo ${game.jogo}`,
+            game.tipo.toUpperCase(),
+            game.estrategia?.toUpperCase() || 'ORIGINAL',
+            ...game.digitos
+        ]);
+    });
+    
+    data.push(['']); // linha vazia
+    data.push(['Gerado por: Gerador de Jogos da Super Sete']);
+    data.push(['Boa sorte! 🟡']);
+    
+    // Criar workbook
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    
+    // Ajustar largura das colunas
+    const colWidths = [
+        {wch: 12}, // Jogo
+        {wch: 10}, // Tipo
+        {wch: 12}, // Estratégia
+        {wch: 4}, {wch: 4}, {wch: 4}, {wch: 4}, {wch: 4}, {wch: 4}, {wch: 4} // C1-C7
+    ];
+    ws['!cols'] = colWidths;
+    
+    XLSX.utils.book_append_sheet(wb, ws, "Jogos Super Sete");
+    
+    // Baixar arquivo
+    XLSX.writeFile(wb, 'jogos_super_sete.xlsx');
+    showNotification('📊 Arquivo XLSX baixado!', 'success');
+}
+
+// =================== FUNÇÕES AUXILIARES ===================
+
+function downloadFile(content, fileName, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    
+    setTimeout(() => {
+        URL.revokeObjectURL(link.href);
+    }, 100);
+}
+
+function formatDate(dateString) {
+    try {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('pt-BR');
+    } catch (error) {
+        return new Date().toLocaleDateString('pt-BR');
+    }
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? 'linear-gradient(135deg, #22c55e, #16a34a)' : 
+                     type === 'error' ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 
+                     'linear-gradient(135deg, #a9cf46, #c6e085)'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        z-index: 10000;
+        font-weight: 600;
+        animation: slideInRight 0.3s ease;
+        max-width: 300px;
+    `;
+    notification.textContent = message;
+    
+    // Adicionar CSS da animação se não existir
+    if (!document.getElementById('notification-style')) {
+        const style = document.createElement('style');
+        style.id = 'notification-style';
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(notification);
+    
+    // Remover após 4 segundos
+    setTimeout(() => {
+        notification.remove();
+    }, 4000);
+}
+
+// =================== FUNÇÕES DE OTIMIZAÇÃO ===================
+
+function showConfirmDialog(message) {
+    return new Promise((resolve) => {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        `;
+        
+        const dialog = document.createElement('div');
+        dialog.style.cssText = `
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 3px solid #a9cf46;
+        `;
+        
+        dialog.innerHTML = `
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h3 style="color: #708e25; margin-bottom: 15px; font-size: 1.4rem;">⚠️ Confirmação Necessária</h3>
+                <p style="color: #303d10; line-height: 1.6; white-space: pre-line; font-size: 1rem;">${message}</p>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button id="cancelBtn" style="
+                    background: #e74c3c;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                ">❌ Cancelar</button>
+                <button id="confirmBtn" style="
+                    background: #a9cf46;
+                    color: white;
+                    border: none;
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 1rem;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                ">✅ Continuar</button>
+            </div>
+        `;
+        
+        modal.appendChild(dialog);
+        document.body.appendChild(modal);
+        
+        // Adicionar eventos
+        const cancelBtn = dialog.querySelector('#cancelBtn');
+        const confirmBtn = dialog.querySelector('#confirmBtn');
+        
+        cancelBtn.addEventListener('click', () => {
+            document.body.removeChild(modal);
+            resolve(false);
+        });
+        
+        confirmBtn.addEventListener('click', () => {
+            document.body.removeChild(modal);
+            resolve(true);
+        });
+        
+        // Fechar com ESC
+        const keyHandler = (e) => {
+            if (e.key === 'Escape') {
+                document.body.removeChild(modal);
+                document.removeEventListener('keydown', keyHandler);
+                resolve(false);
+            }
+        };
+        document.addEventListener('keydown', keyHandler);
+        
+        // Hover effects
+        cancelBtn.addEventListener('mouseenter', () => {
+            cancelBtn.style.background = '#c0392b';
+            cancelBtn.style.transform = 'translateY(-2px)';
+        });
+        cancelBtn.addEventListener('mouseleave', () => {
+            cancelBtn.style.background = '#e74c3c';
+            cancelBtn.style.transform = 'translateY(0)';
+        });
+        
+        confirmBtn.addEventListener('mouseenter', () => {
+            confirmBtn.style.background = '#90b62f';
+            confirmBtn.style.transform = 'translateY(-2px)';
+        });
+        confirmBtn.addEventListener('mouseleave', () => {
+            confirmBtn.style.background = '#a9cf46';
+            confirmBtn.style.transform = 'translateY(0)';
+        });
+    });
+}
+
+// Otimização para grandes quantidades de jogos
+function displayGeneratedGamesOptimized() {
+    const container = document.getElementById('gamesContainer');
+    const section = document.getElementById('gamesSection');
+    
+    // Para quantidades muito grandes, mostrar apenas estatísticas
+    if (generatedGames.length > 5000) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; background: white; border-radius: 10px; border: 2px solid #a9cf46; margin-bottom: 20px;">
+                <h3 style="color: #708e25; margin-bottom: 20px;">
+                    🎮 ${generatedGames.length.toLocaleString()} Jogos Gerados com Sucesso!
+                </h3>
+                <p style="color: #303d10; margin-bottom: 15px; font-size: 1.1rem;">
+                    <strong>Devido à grande quantidade, os jogos não são exibidos na tela para otimizar a performance.</strong>
+                </p>
+                <p style="color: #405115; margin-bottom: 20px;">
+                    Use os botões de download abaixo para obter seus jogos:
+                </p>
+                <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                    <span style="background: #a9cf46; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold;">
+                        📄 TXT: ${(generatedGames.length * 15 / 1024).toFixed(1)} KB
+                    </span>
+                    <span style="background: #c6e085; color: #303d10; padding: 8px 15px; border-radius: 20px; font-weight: bold;">
+                        🌐 HTML: ${(generatedGames.length * 250 / 1024).toFixed(1)} KB
+                    </span>
+                    <span style="background: #b3d55d; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold;">
+                        📊 XLSX: ${(generatedGames.length * 50 / 1024).toFixed(1)} KB
+                    </span>
+                </div>
+            </div>
+        `;
+    } else if (generatedGames.length > 1000) {
+        // Para quantidades médias, mostrar apenas os primeiros 50 jogos
+        container.innerHTML = `
+            <div style="text-align: center; padding: 20px; background: #f6faeb; border-radius: 8px; border: 2px solid #c6e085; margin-bottom: 20px;">
+                <p style="color: #708e25; font-weight: bold; margin-bottom: 10px;">
+                    📊 ${generatedGames.length.toLocaleString()} jogos gerados! Exibindo apenas os primeiros 50 para otimizar a performance.
+                </p>
+                <small style="color: #405115;">Use os botões de download para obter todos os jogos.</small>
+            </div>
+            <div class="games-grid" id="gamesGrid"></div>
+        `;
+        
+        const gamesGrid = document.getElementById('gamesGrid');
+        
+        // Mostrar apenas os primeiros 50 jogos
+        generatedGames.slice(0, 50).forEach(game => {
+            const card = createGameCard(game);
+            gamesGrid.appendChild(card);
+        });
+    } else {
+        // Para quantidades normais, mostrar todos os jogos
+        container.innerHTML = '<div class="games-grid" id="gamesGrid"></div>';
+        const gamesGrid = document.getElementById('gamesGrid');
+        
+        generatedGames.forEach(game => {
+            const card = createGameCard(game);
+            gamesGrid.appendChild(card);
+        });
+    }
+    
+    section.style.display = 'block';
+}
+
+// Função auxiliar para criar um card de jogo
+function createGameCard(game) {
+    const card = document.createElement('div');
+    
+    // Definir classe baseada no tipo
+    if (game.tipo === 'original') {
+        card.className = 'game-card game-original';
+    } else {
+        card.className = 'game-card game-adjusted';
+    }
+    
+    // Criar badge do tipo
+    let typeBadge = '';
+    if (game.tipo === 'original') {
+        typeBadge = '<span class="game-type-badge">🟡 ORIGINAL</span>';
+    } else {
+        const ajusteSymbol = game.ajuste > 0 ? '+' : '';
+        typeBadge = `<span class="game-type-badge">📈 ${game.estrategia.toUpperCase()} (${ajusteSymbol}${game.ajuste})</span>`;
+    }
+    
+    // Análise do jogo
+    const digitosNum = game.digitos.map(d => parseInt(d));
+    const pares = digitosNum.filter(d => d % 2 === 0).length;
+    const impares = 7 - pares;
+    const baixos = digitosNum.filter(d => d < 5).length;
+    const altos = digitosNum.filter(d => d >= 5).length;
+    const soma = digitosNum.reduce((acc, d) => acc + d, 0);
+    
+    card.innerHTML = `
+        <div class="game-header">
+            <i class="fas fa-ticket-alt"></i> Jogo ${game.jogo}
+            ${typeBadge}
+        </div>
+        <div class="game-numbers">
+            ${game.digitos.map((digit, index) => 
+                `<div class="coluna-jogo">
+                    <div class="coluna-jogo-label">C${index + 1}</div>
+                    <div class="digito-jogo">${digit}</div>
+                </div>`
+            ).join('')}
+        </div>
+        <div style="text-align: center; margin-top: 10px;">
+            <span class="digits-info">${pares}P/${impares}I • ${baixos}B/${altos}A • ${soma}</span>
+        </div>
+    `;
+    
+    return card;
+}
+
+// =================== MODAL DE INFORMAÇÕES ===================
+
+function showInfoModal() {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 99999;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        overflow-y: auto;
+        padding: 20px;
+    `;
+    
+    const dialog = document.createElement('div');
+    dialog.style.cssText = `
+        background: white;
+        border-radius: 15px;
+        max-width: 800px;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 15px 50px rgba(0,0,0,0.4);
+        border: 3px solid #a9cf46;
+        position: relative;
+    `;
+    
+    dialog.innerHTML = `
+        <div style="background: linear-gradient(135deg, #a9cf46, #c6e085); color: white; padding: 20px; border-radius: 12px 12px 0 0; text-align: center; position: relative;">
+            <button id="closeModal" style="
+                position: absolute;
+                top: 15px;
+                right: 20px;
+                background: rgba(255,255,255,0.2);
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+                border-radius: 50%;
+                width: 35px;
+                height: 35px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">×</button>
+            <h2 style="margin: 0; font-size: 1.8rem;">
+                <i class="fas fa-info-circle"></i> Como Funciona o Sistema
+            </h2>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Otimizado para Super Sete - 7 colunas com dígitos 0-9</p>
+        </div>
+        
+        <div style="padding: 30px; line-height: 1.6;">
+            
+            <!-- Informações da Super Sete -->
+            <div style="background: linear-gradient(135deg, #a9cf46, #c6e085); color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                <h3 style="margin: 0 0 15px 0; font-size: 1.3rem;">
+                    <i class="fas fa-table"></i> Características da Super Sete
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                        <strong>🎯 7 Colunas</strong><br>
+                        <small>1 dígito de 0 a 9 em cada coluna</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                        <strong>🏆 5 Faixas de Prêmio</strong><br>
+                        <small>3, 4, 5, 6 e 7 acertos</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                        <strong>💰 R$ 2,50</strong><br>
+                        <small>Preço fixo por jogo</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
+                        <strong>📅 3x Semana</strong><br>
+                        <small>Segunda, quarta e sexta</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estratégias de Geração -->
+            <div style="background: linear-gradient(135deg, #27ae60, #229954); color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                <h3 style="margin: 0 0 15px 0; font-size: 1.3rem;">
+                    <i class="fas fa-brain"></i> Estratégias por Colunas
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">⚖️ Equilibrado:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Variações por coluna</li>
+                            <li>✅ Ajustes progressivos pequenos</li>
+                            <li>✅ Estratégia mais segura</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">📊 Frequência:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Por coluna específica</li>
+                            <li>✅ Dígitos mais/menos sorteados</li>
+                            <li>✅ Análise histórica profunda</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">⚖️ Pares/Ímpares:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Proporção ideal nas 7 colunas</li>
+                            <li>✅ Baseado em estatísticas</li>
+                            <li>✅ Distribuição equilibrada</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">📋 Por Colunas:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Estratégia específica por coluna</li>
+                            <li>✅ Frequentes/médios/raros</li>
+                            <li>✅ Análise posicional</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">🔄 Anti-Sequência:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Evita dígitos consecutivos</li>
+                            <li>✅ Entre colunas adjacentes</li>
+                            <li>✅ Reduz padrões óbvios</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <h4 style="margin: 0 0 10px 0;">🧮 Soma Otimizada:</h4>
+                        <ul style="margin: 0; padding-left: 20px;">
+                            <li>✅ Soma próxima à média (~31.5)</li>
+                            <li>✅ Faixa estatística ideal</li>
+                            <li>✅ Distribuição matemática</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sistema de Colunas -->
+            <div style="background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white; padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+                <h3 style="margin: 0 0 15px 0; font-size: 1.3rem;">
+                    <i class="fas fa-columns"></i> Sistema de 7 Colunas
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>📋 Coluna 1</strong><br>
+                        <small>Dígito 0-9</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>📋 Coluna 2</strong><br>
+                        <small>Dígito 0-9</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>📋 Coluna 3</strong><br>
+                        <small>Dígito 0-9</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>📋 Coluna 4</strong><br>
+                        <small>Dígito 0-9</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>📋 Coluna 5</strong><br>
+                        <small>Dígito 0-9</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>📋 Coluna 6</strong><br>
+                        <small>Dígito 0-9</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; text-align: center;">
+                        <strong>📋 Coluna 7</strong><br>
+                        <small>Dígito 0-9</small>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; text-align: center; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                    <strong>🎯 Sistema Único:</strong> Cada coluna é independente e deve ter exatamente 1 dígito selecionado
+                </div>
+            </div>
+            
+            <!-- Downloads -->
+            <div style="background: linear-gradient(135deg, #e67e22, #d35400); color: white; padding: 20px; border-radius: 10px;">
+                <h3 style="margin: 0 0 15px 0; font-size: 1.3rem;">
+                    <i class="fas fa-download"></i> Formatos de Download
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <strong>📄 TXT</strong><br>
+                        <small>Formato simples: "5 0 2 3 9 8 1" (7 dígitos separados)</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <strong>🌐 HTML</strong><br>
+                        <small>Página web com colunas organizadas para impressão</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px;">
+                        <strong>📊 XLSX</strong><br>
+                        <small>Planilha com colunas C1-C7 para análises estatísticas</small>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 0 0 12px 12px; text-align: center; border-top: 2px solid #e9ecef;">
+            <button onclick="document.body.removeChild(this.closest('.fixed'))" style="
+                background: linear-gradient(135deg, #a9cf46, #c6e085);
+                color: white;
+                border: none;
+                padding: 12px 30px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-size: 1.1rem;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 5px 15px rgba(169,207,70,0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                <i class="fas fa-check"></i> Entendi! Vamos Jogar
+            </button>
+            <p style="margin: 15px 0 0 0; color: #6c757d; font-size: 0.9rem;">
+                <i class="fas fa-columns"></i> Super Sete - 7 colunas, 7 chances de ganhar!
+            </p>
+        </div>
+    `;
+    
+    modal.appendChild(dialog);
+    document.body.appendChild(modal);
+    
+    // Eventos para fechar o modal
+    const closeBtn = dialog.querySelector('#closeModal');
+    closeBtn.addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+    
+    // Fechar clicando fora do modal
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            document.body.removeChild(modal);
+        }
+    });
+    
+    // Fechar com ESC
+    const keyHandler = (e) => {
+        if (e.key === 'Escape') {
+            document.body.removeChild(modal);
+            document.removeEventListener('keydown', keyHandler);
+        }
+    };
+    document.addEventListener('keydown', keyHandler);
+}
+</script>
+
+</body>
+</html>
